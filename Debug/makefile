@@ -61,8 +61,8 @@ all: main-build
 main-build: CC1101_HAL_Example.elf secondary-outputs
 
 # Tool invocations
-CC1101_HAL_Example.elf: $(OBJS) $(USER_OBJS) C:\!MEGA\!myFiles\STM\CC1101_HAL_Example\STM32F401RETX_FLASH.ld makefile objects.list $(OPTIONAL_TOOL_DEPS)
-	arm-none-eabi-gcc -o "CC1101_HAL_Example.elf" @"objects.list" $(USER_OBJS) $(LIBS) -mcpu=cortex-m4 -T"C:\!MEGA\!myFiles\STM\CC1101_HAL_Example\STM32F401RETX_FLASH.ld" --specs=nosys.specs -Wl,-Map="CC1101_HAL_Example.map" -Wl,--gc-sections -static --specs=nano.specs -mfpu=fpv4-sp-d16 -mfloat-abi=hard -mthumb -Wl,--start-group -lc -lm -Wl,--end-group
+CC1101_HAL_Example.elf: $(OBJS) $(USER_OBJS) C:\Users\Sergey\Desktop\Daatrics\CC1101_STM32_HAL_Example\STM32F401RETX_FLASH.ld makefile objects.list $(OPTIONAL_TOOL_DEPS)
+	arm-none-eabi-gcc -o "CC1101_HAL_Example.elf" @"objects.list" $(USER_OBJS) $(LIBS) -mcpu=cortex-m4 -T"C:\Users\Sergey\Desktop\Daatrics\CC1101_STM32_HAL_Example\STM32F401RETX_FLASH.ld" --specs=nosys.specs -Wl,-Map="CC1101_HAL_Example.map" -Wl,--gc-sections -static --specs=nano.specs -mfpu=fpv4-sp-d16 -mfloat-abi=hard -mthumb -Wl,--start-group -lc -lm -Wl,--end-group
 	@echo 'Finished building target: $@'
 	@echo ' '
 

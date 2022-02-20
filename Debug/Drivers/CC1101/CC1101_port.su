@@ -1,5 +1,5 @@
-CC1101_port.c:6:9:___CC1101_USER_SPI_TxRx	32	static
-CC1101_port.c:11:6:___CC1101_USER_CS_High	8	static
-CC1101_port.c:14:6:___CC1101_USER_CS_Low	8	static
-CC1101_port.c:19:13:CC1101_RXPacketCmpl_Callback	8	static
-CC1101_port.c:23:13:CC1101_TXPacketCmpl_Callback	8	static
+CC1101_port.c:7:9:___CC1101_USER_SPI_TxRx	32	static
+CC1101_port.c:12:6:___CC1101_USER_CS_High	8	static
+CC1101_port.c:15:6:___CC1101_USER_CS_Low	8	static
+CC1101_port.c:20:13:CC1101_RXPacketCmpl_Callback	4	static
+CC1101_port.c:24:13:CC1101_TXPacketCmpl_Callback	4	static

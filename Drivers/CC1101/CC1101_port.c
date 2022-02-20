@@ -1,3 +1,4 @@
+#include "CC1101_port.h"
 #include "main.h"
 
 #define CC_SPI hspi1
@@ -18,9 +19,9 @@ void ___CC1101_USER_CS_Low(){
 
 __weak void CC1101_RXPacketCmpl_Callback()
 {
-	nop();
+	//nop();
 }
 __weak void CC1101_TXPacketCmpl_Callback()
 {
-	nop();
+	//nop();
 }

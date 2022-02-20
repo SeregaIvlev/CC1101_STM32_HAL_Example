@@ -8,6 +8,8 @@
 #ifndef CC1101_CC1101_MACRO_H_
 #define CC1101_CC1101_MACRO_H_
 
+#include <stdint.h>
+
 uint8_t CC1101_DefaultSettings[47] = {
 	    0x29,  // IOCFG2              GDO2 Output Pin Configuration
 	    0x2E,  // IOCFG1              GDO1 Output Pin Configuration
@@ -89,6 +91,35 @@ uint8_t CC1101_DefaultSettings[47] = {
 
 #define CC1101_AUTOFLUSH_ON		1
 #define CC1101_AUTOFLUSH_OFF 	0
+
+#define CC1101_FIXED_PKTLN 	0b00
+#define CC1101_DYNAM_PKTLN 	0b01
+
+#define CC1101_DRATE_1200	0x0583
+#define CC1101_DRATE_2400	0x0683
+#define CC1101_DRATE_10K	0x0893
+#define CC1101_DRATE_38K4	0x0A83
+#define CC1101_DRATE_76K8	0x0B83
+#define CC1101_DRATE_100K	0x08F8
+#define CC1101_DRATE_250K	0x0D3B
+
+#define CC1101_PREAMB_2B	0
+#define CC1101_PREAMB_3B	1
+#define CC1101_PREAMB_4B	2
+#define CC1101_PREAMB_6B	3
+#define CC1101_PREAMB_8B	4
+#define CC1101_PREAMB_12B	5
+#define CC1101_PREAMB_16B	6
+#define CC1101_PREAMB_24B	7
+
+#define CC1101_EN_CRC		1
+#define CC1101_NO_CRC		0
+
+#define CC1101_EN_WHITENING	1
+#define CC1101_NO_WHITENING	0
+
+#define CC1101_EN_FEC		1
+#define CC1101_NO_FEC		0
 
 #define IOCFG2         0x00		//GDO2 Output Pin Configuration
 #define IOCFG1         0x01		//GDO1 Output Pin Configuration

@@ -10,12 +10,13 @@
 
 #include <stdint.h>
 
+
 /* Default config:
  * Base Freq: 		433.0
  * Channel: 		0
  * Modulation: 		GFSK
  * TxPower: 		0 dBm
- * Data rate: 		100 kBaud
+ * Data rate: 		20 kBaud
  * CRC: 			enabled
  * Channel Spacing: 199.5 kHz
  * RX filter BW: 	325 kHz
@@ -30,13 +31,14 @@
  * Address:			0x00
  */
 
+
 uint8_t CC1101_GPIO_Prepare();
 uint8_t CC1101_Init();
 uint8_t CC1101_TransmitPacket(uint8_t* data, uint8_t size);
-
+uint8_t Cc1101_GoToRX();
 
 uint8_t CC1101_IsDataAvalable();
-uint8_t CC1101_ReadPacket();
+uint8_t CC1101_ReadPacket(uint8_t* data);
 uint8_t CC1101_ReadStatus();
 
 
@@ -47,10 +49,15 @@ void CC1101_SetChannel(uint8_t channel);
 void CC1101_SetModulation(uint8_t modulation);
 void CC1101_SetAttenuator(uint8_t value);
 void CC1101_SetTXPower(uint8_t txPower);
-void CC1101_SetAddressation(uint8_t addressationMode, uint8_t devAddr);
+void CC1101_SetAddressation(uint8_t addressationMode, uint8_t devAddr, uint8_t txAddr);
 void CC1101_SetAutoFlashRX(uint8_t mode);
 void CC1101_SetAddStatus(uint8_t mode);
-void CC1101_SetDataRate(float datarate);
+void CC1101_SetDataRate(uint16_t datarate);
+void CC1101_SetPacketLengthMode(uint8_t mode);
+void CC1101_SetPreambuleMinSize(uint8_t preamb);
+void CC1101_SetCRCmode(uint8_t CRCmode);
+void CC1101_SetWhitening(uint8_t whitening);
+void CC1101_SetFEC(uint8_t mode);
 
 #define CC1101_OK		0
 #define CC1101_ERROR	1

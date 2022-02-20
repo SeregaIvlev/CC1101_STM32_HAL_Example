@@ -58,7 +58,9 @@ static void MX_SPI1_Init(void);
 
 /* Private user code ---------------------------------------------------------*/
 /* USER CODE BEGIN 0 */
-
+uint8_t rxBytes = 0;
+uint8_t rxData[30];
+uint8_t lth = 0;
 /* USER CODE END 0 */
 
 /**
@@ -84,7 +86,6 @@ int main(void)
   SystemClock_Config();
 
   /* USER CODE BEGIN SysInit */
-
   /* USER CODE END SysInit */
 
   /* Initialize all configured peripherals */
@@ -94,17 +95,28 @@ int main(void)
   /* USER CODE BEGIN 2 */
   CC1101_GPIO_Prepare();
   CC1101_Init();
+  Cc1101_GoToRX();
+
   /* USER CODE END 2 */
 
   /* Infinite loop */
   /* USER CODE BEGIN WHILE */
   while (1)
   {
-	  uint8_t data[10] = { 0xAA, 0xAB, 0xAC, 0xAD, 0xAE, 0xBA, 0xBB, 0xBC, 0xBD, 0xBE };
+	  /*uint8_t data[10] = { 0xAA, 0xAB, 0xAC, 0xAD, 0xAE, 0xBA, 0xBB, 0xBC, 0xBD, 0xBE };
 	  HAL_GPIO_WritePin(LD2_GPIO_Port, LD2_Pin, SET);
 	  CC1101_TransmitPacket(data, 10);
 	  HAL_GPIO_WritePin(LD2_GPIO_Port, LD2_Pin, RESET);
-	  HAL_Delay(1000);
+	  HAL_Delay(1000);*/
+	  //rxBytes = CC1101_IsDataAvalable();
+	  if(CC1101_IsDataAvalable())
+	  {
+
+		  lth = CC1101_ReadPacket(rxData);
+
+	  }
+
+
     /* USER CODE END WHILE */
 
     /* USER CODE BEGIN 3 */
