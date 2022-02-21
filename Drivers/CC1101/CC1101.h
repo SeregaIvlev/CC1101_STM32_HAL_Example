@@ -35,7 +35,7 @@
 uint8_t CC1101_GPIO_Prepare();
 uint8_t CC1101_Init();
 uint8_t CC1101_TransmitPacket(uint8_t* data, uint8_t size);
-uint8_t Cc1101_GoToRX();
+uint8_t CC1101_GoToRX();
 
 uint8_t CC1101_IsDataAvalable();
 uint8_t CC1101_ReadPacket(uint8_t* data);

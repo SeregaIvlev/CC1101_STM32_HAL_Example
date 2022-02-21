@@ -30,6 +30,7 @@ uint8_t CC1101_Init(){
 	return CC1101_OK;
 }
 uint8_t CC1101_TransmitPacket(uint8_t* data, uint8_t size){
+	__CC1101_WriteCMD(CC1101_SIDLE);
 	if((__CC1101_ReadReg(PKTCTRL1) & 0b11) != 0b00)
 		size++;
 	/* Length select */
@@ -46,25 +47,25 @@ uint8_t CC1101_TransmitPacket(uint8_t* data, uint8_t size){
 
 	/* Transmitting */
 	__CC1101_BurstWriteReg(CC1101_TXFIFO, size, data);
-	__CC1101_WriteCMD(CC1101_SIDLE);
+
 	__CC1101_WriteCMD(CC1101_STX);
 	while((__CC1101_ReadStatusRegs(CC1101_TXBYTES) & 0x7F) != 0);
 	__CC1101_WriteCMD(CC1101_SFTX);
-	CC1101_TXPacketCmpl_Callback();
+	//CC1101_TXPacketCmpl_Callback();
 	return CC1101_OK;
 }
-uint8_t Cc1101_GoToRX()
+uint8_t CC1101_GoToRX()
 {
 	__CC1101_WriteCMD(CC1101_SIDLE);
 	__CC1101_WriteCMD(CC1101_SRX);        //start receive
 	return CC1101_OK;
 }
-uint8_t CC1101_IsDataAvalable()
+uint8_t CC1101_IsDataAvailable()
 {
 	return __CC1101_ReadStatusRegs(CC1101_RXBYTES) & 0x7F;
 
 }
-uint8_t CC1101_ReadPacket(uint8_t* data)
+uint8_t CC1101_ReadPacket(uint8_t* data, uint8_t* RSSI, uint8_t* LQI)
 {
 
 
@@ -78,6 +79,8 @@ uint8_t CC1101_ReadPacket(uint8_t* data)
 		__CC1101_BurstReadReg(CC1101_RXFIFO, 2, status);
 		__CC1101_WriteCMD(CC1101_SFRX);
 		__CC1101_WriteCMD(CC1101_SRX);
+		*RSSI = status[0];
+		*LQI = status[1];
 		return size;
 	}
 	else
@@ -94,7 +97,11 @@ uint8_t CC1101_ReadStatus()
 	___CC1101_USER_CS_High();
 	return status_value;
 }
-
+uint8_t CC1101_ToSleep()
+{
+	__CC1101_WriteCMD(CC1101_SIDLE);
+	__CC1101_WriteCMD(CC1101_SPWD);
+}
 /* set settings functions */
 void CC1101_SetBaseFreq(float mhz)
 {
@@ -247,7 +254,7 @@ void __CC1101_WriteReg(uint8_t addr, uint8_t data)
 }
 void __CC1101_BurstReadReg(uint8_t addr, uint8_t lth, uint8_t* data)
 {
-	addr &= 0b00111111;
+	//addr &= 0b00111111;
 	___CC1101_USER_CS_Low();
 	___CC1101_USER_SPI_TxRx( (1<<7) | (1<<6) | addr); //Read and burst bits
 

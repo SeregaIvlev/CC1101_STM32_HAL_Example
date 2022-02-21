@@ -61,6 +61,19 @@ static void MX_SPI1_Init(void);
 uint8_t rxBytes = 0;
 uint8_t rxData[30];
 uint8_t lth = 0;
+
+
+
+void HAL_GPIO_EXTI_Callback(uint16_t GPIO_Pin)
+{
+	if(GPIO_Pin == GDO2_Pin)
+	{
+		lth = CC1101_ReadPacket(rxData);
+		HAL_UART_Transmit_IT(&huart2, rxData, lth);
+	}
+}
+
+
 /* USER CODE END 0 */
 
 /**
@@ -93,9 +106,11 @@ int main(void)
   MX_USART2_UART_Init();
   MX_SPI1_Init();
   /* USER CODE BEGIN 2 */
+
   CC1101_GPIO_Prepare();
   CC1101_Init();
-  Cc1101_GoToRX();
+
+  CC1101_GoToRX();
 
   /* USER CODE END 2 */
 
@@ -103,19 +118,6 @@ int main(void)
   /* USER CODE BEGIN WHILE */
   while (1)
   {
-	  /*uint8_t data[10] = { 0xAA, 0xAB, 0xAC, 0xAD, 0xAE, 0xBA, 0xBB, 0xBC, 0xBD, 0xBE };
-	  HAL_GPIO_WritePin(LD2_GPIO_Port, LD2_Pin, SET);
-	  CC1101_TransmitPacket(data, 10);
-	  HAL_GPIO_WritePin(LD2_GPIO_Port, LD2_Pin, RESET);
-	  HAL_Delay(1000);*/
-	  //rxBytes = CC1101_IsDataAvalable();
-	  if(CC1101_IsDataAvalable())
-	  {
-
-		  lth = CC1101_ReadPacket(rxData);
-
-	  }
-
 
     /* USER CODE END WHILE */
 
@@ -191,7 +193,7 @@ static void MX_SPI1_Init(void)
   hspi1.Init.CLKPolarity = SPI_POLARITY_LOW;
   hspi1.Init.CLKPhase = SPI_PHASE_1EDGE;
   hspi1.Init.NSS = SPI_NSS_SOFT;
-  hspi1.Init.BaudRatePrescaler = SPI_BAUDRATEPRESCALER_2;
+  hspi1.Init.BaudRatePrescaler = SPI_BAUDRATEPRESCALER_32;
   hspi1.Init.FirstBit = SPI_FIRSTBIT_MSB;
   hspi1.Init.TIMode = SPI_TIMODE_DISABLE;
   hspi1.Init.CRCCalculation = SPI_CRCCALCULATION_DISABLE;
@@ -272,6 +274,16 @@ static void MX_GPIO_Init(void)
   GPIO_InitStruct.Pull = GPIO_NOPULL;
   GPIO_InitStruct.Speed = GPIO_SPEED_FREQ_LOW;
   HAL_GPIO_Init(GPIOA, &GPIO_InitStruct);
+
+  /*Configure GPIO pin : GDO2_Pin */
+  GPIO_InitStruct.Pin = GDO2_Pin;
+  GPIO_InitStruct.Mode = GPIO_MODE_IT_RISING;
+  GPIO_InitStruct.Pull = GPIO_NOPULL;
+  HAL_GPIO_Init(GDO2_GPIO_Port, &GPIO_InitStruct);
+
+  /* EXTI interrupt init*/
+  HAL_NVIC_SetPriority(EXTI15_10_IRQn, 0, 0);
+  HAL_NVIC_EnableIRQ(EXTI15_10_IRQn);
 
 }
 
