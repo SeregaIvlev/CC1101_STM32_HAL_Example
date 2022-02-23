@@ -58,9 +58,8 @@ static void MX_SPI1_Init(void);
 
 /* Private user code ---------------------------------------------------------*/
 /* USER CODE BEGIN 0 */
-uint8_t rxBytes = 0;
-uint8_t rxData[30];
-uint8_t lth = 0;
+uint8_t rxData[64];
+uint8_t txData[64];
 
 
 
@@ -68,11 +67,27 @@ void HAL_GPIO_EXTI_Callback(uint16_t GPIO_Pin)
 {
 	if(GPIO_Pin == GDO2_Pin)
 	{
-		lth = CC1101_ReadPacket(rxData);
-		HAL_UART_Transmit_IT(&huart2, rxData, lth);
-	}
-}
+		uint8_t RSSI, LQI;
+		 HAL_GPIO_TogglePin(LD2_GPIO_Port, LD2_Pin);
+		uint8_t rxLength = CC1101_ReadPacket(rxData, &RSSI, &LQI);
+		HAL_UART_Transmit_IT(&huart2, rxData, rxLength-1);
 
+	}
+
+}
+uint8_t HAL_UART_ReceiveString(UART_HandleTypeDef *huart, uint8_t *pData, uint32_t tSilent, uint32_t Timeout)
+{
+	uint8_t i = 0;
+	if(HAL_UART_Receive(huart, &pData[i++], 1, Timeout-tSilent) == HAL_TIMEOUT)
+		return 0;
+	else
+	{
+		while(HAL_UART_Receive(huart, &pData[i++], 1, tSilent)!= HAL_TIMEOUT);
+		return i;
+	}
+
+
+}
 
 /* USER CODE END 0 */
 
@@ -110,14 +125,25 @@ int main(void)
   CC1101_GPIO_Prepare();
   CC1101_Init();
 
-  CC1101_GoToRX();
-
   /* USER CODE END 2 */
 
   /* Infinite loop */
   /* USER CODE BEGIN WHILE */
   while (1)
   {
+	  CC1101_GoToRX();
+	  uint8_t txLength = HAL_UART_ReceiveString(&huart2, txData, 100, HAL_MAX_DELAY);
+	  CC1101_TransmitPacket(txData, txLength);
+	  HAL_GPIO_TogglePin(LD2_GPIO_Port, LD2_Pin);
+	  HAL_Delay(10);
+
+	 /* uint8_t data[10] = { 0xAA, 0xAB, 0xAC, 0xAD, 0xAE, 0xBA, 0xBB, 0xBC, 0xBD, 0xBE };
+	  HAL_GPIO_WritePin(LD2_GPIO_Port, LD2_Pin, SET);
+	  CC1101_TransmitPacket(data, 10);
+	  HAL_Delay(10);
+	  CC1101_GoToRX();
+	  HAL_GPIO_WritePin(LD2_GPIO_Port, LD2_Pin, RESET);
+	  HAL_Delay(1000);*/
 
     /* USER CODE END WHILE */
 

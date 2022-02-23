@@ -51,7 +51,7 @@ uint8_t CC1101_TransmitPacket(uint8_t* data, uint8_t size){
 	__CC1101_WriteCMD(CC1101_STX);
 	while((__CC1101_ReadStatusRegs(CC1101_TXBYTES) & 0x7F) != 0);
 	__CC1101_WriteCMD(CC1101_SFTX);
-	//CC1101_TXPacketCmpl_Callback();
+	CC1101_TXPacketCmpl_Callback();
 	return CC1101_OK;
 }
 uint8_t CC1101_GoToRX()
@@ -101,6 +101,7 @@ uint8_t CC1101_ToSleep()
 {
 	__CC1101_WriteCMD(CC1101_SIDLE);
 	__CC1101_WriteCMD(CC1101_SPWD);
+	return CC1101_OK;
 }
 /* set settings functions */
 void CC1101_SetBaseFreq(float mhz)
@@ -231,8 +232,28 @@ void CC1101_SetFEC(uint8_t mode)
 	data |= mode << 7;
 	__CC1101_WriteReg(MDMCFG1, data);
 }
+void CC1101_SetPQI(uint8_t PQI){
+	uint8_t data = __CC1101_ReadReg(PKTCTRL1) & 0b00011111;
+	data |= PQI << 5;
+	__CC1101_WriteReg(PKTCTRL1, data);
+}
+void CC1101_setDeviation(float d){
+	#warning test it
+	float f = 1.586914;
+	float v = 0.19836425;
+	int c = 0;
 
+	if (d > 380.859375) {d = 380.859375;}
+	if (d < 1.586914) {d = 1.586914;}
 
+	for (int i = 0; i<255; i++){
+		f+=v;
+		if (c==7){v*=2;c=-1;i+=8;}
+		if (f>=d){c=i;i=255;}
+		c++;
+	}
+	__CC1101_WriteReg(DEVIATN,c);
+}
 /* non-user functions */
 uint8_t __CC1101_ReadReg(uint8_t addr)
 {

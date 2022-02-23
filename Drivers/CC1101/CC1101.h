@@ -37,8 +37,8 @@ uint8_t CC1101_Init();
 uint8_t CC1101_TransmitPacket(uint8_t* data, uint8_t size);
 uint8_t CC1101_GoToRX();
 
-uint8_t CC1101_IsDataAvalable();
-uint8_t CC1101_ReadPacket(uint8_t* data);
+uint8_t CC1101_IsDataAvailable();
+uint8_t CC1101_ReadPacket(uint8_t* data, uint8_t* RSSI, uint8_t* LQI);
 uint8_t CC1101_ReadStatus();
 
 
@@ -58,6 +58,7 @@ void CC1101_SetPreambuleMinSize(uint8_t preamb);
 void CC1101_SetCRCmode(uint8_t CRCmode);
 void CC1101_SetWhitening(uint8_t whitening);
 void CC1101_SetFEC(uint8_t mode);
+void CC1101_setDeviation(float d);
 
 #define CC1101_OK		0
 #define CC1101_ERROR	1
