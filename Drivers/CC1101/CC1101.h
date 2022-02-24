@@ -31,14 +31,47 @@
  * Address:			0x00
  */
 
-
+/*
+ * Initial SPI settings and CS prepare should be implemented here
+ */
 uint8_t CC1101_GPIO_Prepare();
+
+/*
+ * Check RF`s ID, write initial config, defined in CC1101_macro.h
+ */
 uint8_t CC1101_Init();
+
+/*
+ * Transmitting of byte flow with 1 <= length <= 62
+ * data - pointer to data array
+ * size - quantity of bytes to be sent
+ */
 uint8_t CC1101_TransmitPacket(uint8_t* data, uint8_t size);
+
+/*
+ * Go to RX mode thought idle. In this mode tranceiver can receive packets
+ */
 uint8_t CC1101_GoToRX();
 
+/*
+ * Check RX FIFO state.
+ * return value - number of bytes in RX FIFO
+ */
 uint8_t CC1101_IsDataAvailable();
+
+/*
+ * Read packet from RX FIFO
+ * data - pointer to data array
+ * RSSI - pointer to instant RSSI
+ * LQI - pointer to instant LQI
+ * return value - number of received bytes in RX FIFO
+ */
 uint8_t CC1101_ReadPacket(uint8_t* data, uint8_t* RSSI, uint8_t* LQI);
+
+/*
+ * Read status register
+ * return value - status register
+ */
 uint8_t CC1101_ReadStatus();
 
 

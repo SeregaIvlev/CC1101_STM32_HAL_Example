@@ -137,14 +137,6 @@ int main(void)
 	  HAL_GPIO_TogglePin(LD2_GPIO_Port, LD2_Pin);
 	  HAL_Delay(10);
 
-	 /* uint8_t data[10] = { 0xAA, 0xAB, 0xAC, 0xAD, 0xAE, 0xBA, 0xBB, 0xBC, 0xBD, 0xBE };
-	  HAL_GPIO_WritePin(LD2_GPIO_Port, LD2_Pin, SET);
-	  CC1101_TransmitPacket(data, 10);
-	  HAL_Delay(10);
-	  CC1101_GoToRX();
-	  HAL_GPIO_WritePin(LD2_GPIO_Port, LD2_Pin, RESET);
-	  HAL_Delay(1000);*/
-
     /* USER CODE END WHILE */
 
     /* USER CODE BEGIN 3 */
