@@ -4,19 +4,54 @@
 #include "CC1101_macro.h"
 
 uint8_t txAddr = 0;
-
+/* Read single register
+ * addr - register address
+ * return value - value of register
+ */
 uint8_t __CC1101_ReadReg(uint8_t addr);
+
+/* Write to single register
+ * addr - register address
+ * data - value to write into register
+ */
 void __CC1101_WriteReg(uint8_t addr, uint8_t data);
+
+/* Burst read from registers
+ * addr - base register address
+ * lth - length data to be received
+ * data - pointer to data
+ */
 void __CC1101_BurstReadReg(uint8_t addr, uint8_t lth, uint8_t* data);
+
+/* Write read to registers
+ * addr - base register address
+ * lth - length data to be transmitted
+ * data - pointer to data
+ */
 void __CC1101_BurstWriteReg(uint8_t addr, uint8_t lth, uint8_t* data);
+
+/* Write command to the device
+ * cmd - command code
+ */
 void __CC1101_WriteCMD(uint8_t cmd);
+
+/* Read status registers
+ * addr - address of register
+ * return value - value of register
+ */
 uint8_t __CC1101_ReadStatusRegs(uint8_t addr);
 
-
+/*
+ * Initial SPI settings and CS prepare should be implemented here
+ */
 uint8_t CC1101_GPIO_Prepare(){
 	___CC1101_USER_CS_High();
 	return CC1101_OK;
 }
+
+/*
+ * Check RF`s ID, write initial config, defined in CC1101_macro.h
+ */
 uint8_t CC1101_Init(){
 
 	__CC1101_WriteCMD(CC1101_SRES);
@@ -29,6 +64,12 @@ uint8_t CC1101_Init(){
 
 	return CC1101_OK;
 }
+
+/*
+ * Transmitting of byte flow with 1 <= length <= 62
+ * data - pointer to data array
+ * size - quantity of bytes to be sent
+ */
 uint8_t CC1101_TransmitPacket(uint8_t* data, uint8_t size){
 	__CC1101_WriteCMD(CC1101_SIDLE);
 	if((__CC1101_ReadReg(PKTCTRL1) & 0b11) != 0b00)
@@ -54,17 +95,34 @@ uint8_t CC1101_TransmitPacket(uint8_t* data, uint8_t size){
 	CC1101_TXPacketCmpl_Callback();
 	return CC1101_OK;
 }
+
+/*
+ * Go to RX mode thought idle. In this mode tranceiver can receive packets
+ */
 uint8_t CC1101_GoToRX()
 {
 	__CC1101_WriteCMD(CC1101_SIDLE);
 	__CC1101_WriteCMD(CC1101_SRX);        //start receive
 	return CC1101_OK;
 }
+
+/*
+ * Check RX FIFO state
+ * return value - number of bytes in RX FIFO
+ */
 uint8_t CC1101_IsDataAvailable()
 {
 	return __CC1101_ReadStatusRegs(CC1101_RXBYTES) & 0x7F;
 
 }
+
+/*
+ * Read packet from RX FIFO
+ * data - pointer to data array
+ * RSSI - pointer to instant RSSI
+ * LQI - pointer to instant LQI
+ * return value - number of received bytes in RX FIFO
+ */
 uint8_t CC1101_ReadPacket(uint8_t* data, uint8_t* RSSI, uint8_t* LQI)
 {
 
@@ -90,6 +148,11 @@ uint8_t CC1101_ReadPacket(uint8_t* data, uint8_t* RSSI, uint8_t* LQI)
  		return 0;
 	}
 }
+
+/*
+ * Read status register
+ * return value - status register
+ */
 uint8_t CC1101_ReadStatus()
 {
 	___CC1101_USER_CS_Low();
@@ -97,6 +160,10 @@ uint8_t CC1101_ReadStatus()
 	___CC1101_USER_CS_High();
 	return status_value;
 }
+
+/*
+ * Go to sleep CMD
+ */
 uint8_t CC1101_ToSleep()
 {
 	__CC1101_WriteCMD(CC1101_SIDLE);
@@ -104,6 +171,10 @@ uint8_t CC1101_ToSleep()
 	return CC1101_OK;
 }
 /* set settings functions */
+
+/* Set Base Frequency
+ * mhz - freq in MHz
+ */
 void CC1101_SetBaseFreq(float mhz)
 {
 	uint8_t freq2 = 0;
@@ -132,32 +203,56 @@ void CC1101_SetBaseFreq(float mhz)
 	__CC1101_WriteReg(FREQ1, freq1);
 	__CC1101_WriteReg(FREQ0, freq0);
 
-	//Calibrate();
 }
+
+/* Set synq word
+ * synqword - 16-bit synq word
+ */
 void CC1101_SetSynqWord(uint16_t synqword)
 {
 	__CC1101_WriteReg(SYNC1, synqword>>8);
 	__CC1101_WriteReg(SYNC0, (uint8_t)synqword);
 }
+
+/* Set channel
+ * channel - number of channel
+ */
 void CC1101_SetChannel(uint8_t channel){
 	__CC1101_WriteReg(CHANNR, channel);
 }
+
+/* Set modulation
+ * modulation - refer to macro.h file to choose correct value
+ */
 void CC1101_SetModulation(uint8_t modulation){
 	uint8_t data = __CC1101_ReadReg(MDMCFG2);
 	data &= 0b10001111;
 	data |= modulation<<4;
 	__CC1101_WriteReg(MDMCFG2, data);
 }
+
+/* Set attenuation in RX mode
+ * value - refer to macro.h file to choose correct value
+ */
 void CC1101_SetAttenuator(uint8_t value){
 	uint8_t data = __CC1101_ReadReg(FIFOTHR);
 	data &= 0b11001111;
 	data |= value<<4;
 	__CC1101_WriteReg(FIFOTHR, data);
 }
+
+/* Set transmit power
+ * txPower - refer to macro.h file to choose correct value
+ */
 void CC1101_SetTXPower(uint8_t txPower){
-	#warning not tested
 	__CC1101_BurstWriteReg(CC1101_PATABLE, 1, &txPower);
 }
+
+/* Set addressation mode
+ * addressationMode - refer to macro.h file to choose correct value
+ * devAddr - device address(8 bit)
+ * txAddr - address mark in packet(8 bit)
+ */
 void CC1101_SetAddressation(uint8_t addressationMode, uint8_t devAddr, uint8_t NewTxAddress){
 
 	txAddr = NewTxAddress;
@@ -170,6 +265,10 @@ void CC1101_SetAddressation(uint8_t addressationMode, uint8_t devAddr, uint8_t N
 
 	__CC1101_WriteReg(ADDR, devAddr);
 }
+
+/* Set packet length mode
+ * mode - refer to macro.h file to choose correct value
+ */
 void CC1101_SetPacketLengthMode(uint8_t mode){
 	if(mode == CC1101_FIXED_PKTLN)
 	{
@@ -187,6 +286,10 @@ void CC1101_SetPacketLengthMode(uint8_t mode){
 	}
 
 }
+
+/* Set Autoflash mode
+ * mode - refer to macro.h file to choose correct value
+ */
 void CC1101_SetAutoFlashRX(uint8_t mode)
 {
 	uint8_t data = __CC1101_ReadReg(PKTCTRL1);
@@ -194,6 +297,10 @@ void CC1101_SetAutoFlashRX(uint8_t mode)
 	data |= mode<<3;
 	__CC1101_WriteReg(PKTCTRL1, data);
 }
+
+/* Set additional mark status
+ * mode - refer to macro.h file to choose correct value
+ */
 void CC1101_SetAddStatus(uint8_t mode)
 {
 	uint8_t data = __CC1101_ReadReg(PKTCTRL1);
@@ -201,6 +308,10 @@ void CC1101_SetAddStatus(uint8_t mode)
 	data |= mode<<2;
 	__CC1101_WriteReg(PKTCTRL1, mode);
 }
+
+/* Set data rate
+ * datarate - refer to macro.h file to choose correct value
+ */
 void CC1101_SetDataRate(uint16_t datarate){
 	__CC1101_WriteReg(MDMCFG3, (uint8_t)datarate);
 	uint8_t data = __CC1101_ReadReg(MDMCFG4) & 0b11110000;
@@ -208,37 +319,61 @@ void CC1101_SetDataRate(uint16_t datarate){
 	__CC1101_WriteReg(MDMCFG4, data);
 
 }
+
+/* Set preambule minimal size
+ * preamb - refer to macro.h file to choose correct value
+ */
 void CC1101_SetPreambuleMinSize(uint8_t preamb)
 {
 	uint8_t data = __CC1101_ReadReg(MDMCFG1) & 0b10001111;
 	data |= preamb << 4;
 	__CC1101_WriteReg(MDMCFG1, data);
 }
+
+/* Set CRC mode
+ * CRCmode - refer to macro.h file to choose correct value
+ */
 void CC1101_SetCRCmode(uint8_t CRCmode)
 {
 	uint8_t data = __CC1101_ReadReg(PKTCTRL0) & 0b11111011;
 	data |= CRCmode << 2;
 	__CC1101_WriteReg(PKTCTRL0, data);
 }
+
+/* Set data whitening
+ * whitening - refer to macro.h file to choose correct value
+ */
 void CC1101_SetWhitening(uint8_t whitening)
 {
 	uint8_t data = __CC1101_ReadReg(PKTCTRL0) & 0b10111111;
 	data |= whitening << 6;
 	__CC1101_WriteReg(PKTCTRL0, data);
 }
+
+/* Set forward error correction
+ * mode - refer to macro.h file to choose correct value
+ * only available in fixed-size packet mode
+ */
 void CC1101_SetFEC(uint8_t mode)
 {
 	uint8_t data = __CC1101_ReadReg(MDMCFG1) & 0b01111111;
 	data |= mode << 7;
 	__CC1101_WriteReg(MDMCFG1, data);
 }
+
+/* Set preambule quality indicator treshold
+ * mode - refer to macro.h file to choose correct value
+ */
 void CC1101_SetPQI(uint8_t PQI){
 	uint8_t data = __CC1101_ReadReg(PKTCTRL1) & 0b00011111;
 	data |= PQI << 5;
 	__CC1101_WriteReg(PKTCTRL1, data);
 }
+
+/* Set deviation(1/2 of TX_bw)
+ * d - deviation in KHz
+ */
 void CC1101_setDeviation(float d){
-	#warning test it
 	float f = 1.586914;
 	float v = 0.19836425;
 	int c = 0;
@@ -254,6 +389,7 @@ void CC1101_setDeviation(float d){
 	}
 	__CC1101_WriteReg(DEVIATN,c);
 }
+
 /* non-user functions */
 uint8_t __CC1101_ReadReg(uint8_t addr)
 {

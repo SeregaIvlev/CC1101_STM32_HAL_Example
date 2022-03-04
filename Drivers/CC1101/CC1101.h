@@ -49,7 +49,7 @@ uint8_t CC1101_Init();
 uint8_t CC1101_TransmitPacket(uint8_t* data, uint8_t size);
 
 /*
- * Go to RX mode thought idle. In this mode tranceiver can receive packets
+ * Go to RX mode though t idle. In this mode tranceiver can receive packets
  */
 uint8_t CC1101_GoToRX();
 
@@ -74,23 +74,102 @@ uint8_t CC1101_ReadPacket(uint8_t* data, uint8_t* RSSI, uint8_t* LQI);
  */
 uint8_t CC1101_ReadStatus();
 
-
+/*
+ * Go to sleep CMD
+ */
+uint8_t CC1101_ToSleep();
 /* set settings functions */
+
+/* Set Base Frequency
+ * mhz - freq in MHz
+ */
 void CC1101_SetBaseFreq(float mhz);
+
+/* Set synq word
+ * synqword - 16-bit synq word
+ */
 void CC1101_SetSynqWord(uint16_t synqword);
+
+/* Set channel
+ * channel - number of channel
+ */
 void CC1101_SetChannel(uint8_t channel);
+
+/* Set modulation
+ * modulation - refer to macro.h file to choose correct value
+ */
 void CC1101_SetModulation(uint8_t modulation);
+
+/* Set attenuation in RX mode
+ * value - refer to macro.h file to choose correct value
+ */
 void CC1101_SetAttenuator(uint8_t value);
+
+/* Set transmit power
+ * txPower - refer to macro.h file to choose correct value
+ */
 void CC1101_SetTXPower(uint8_t txPower);
+
+/* Set addressation mode
+ * addressationMode - refer to macro.h file to choose correct value
+ * devAddr - device address(8 bit)
+ * txAddr - address mark in packet(8 bit)
+ */
 void CC1101_SetAddressation(uint8_t addressationMode, uint8_t devAddr, uint8_t txAddr);
+
+/* Set Autoflash mode
+ * mode - refer to macro.h file to choose correct value
+ */
 void CC1101_SetAutoFlashRX(uint8_t mode);
+
+/* Set additional mark status
+ * mode - refer to macro.h file to choose correct value
+ */
 void CC1101_SetAddStatus(uint8_t mode);
+
+/* Set data rate
+ * datarate - refer to macro.h file to choose correct value
+ */
 void CC1101_SetDataRate(uint16_t datarate);
+
+/* Set packet length mode
+ * mode - refer to macro.h file to choose correct value
+ */
 void CC1101_SetPacketLengthMode(uint8_t mode);
+
+/* Set preambule minimal size
+ * preamb - refer to macro.h file to choose correct value
+ */
 void CC1101_SetPreambuleMinSize(uint8_t preamb);
+
+/* Set CRC mode
+ * CRCmode - refer to macro.h file to choose correct value
+ */
 void CC1101_SetCRCmode(uint8_t CRCmode);
+
+/* Set data whitening
+ * whitening - refer to macro.h file to choose correct value
+ */
 void CC1101_SetWhitening(uint8_t whitening);
+
+/* Set forward error correction
+ * mode - refer to macro.h file to choose correct value
+ * only available in fixed-size packet mode
+ */
 void CC1101_SetFEC(uint8_t mode);
+
+/* Set preambule quality indicator treshold
+ * mode - refer to macro.h file to choose correct value
+ */
+void CC1101_SetPQI(uint8_t PQI){
+	uint8_t data = __CC1101_ReadReg(PKTCTRL1) & 0b00011111;
+	data |= PQI << 5;
+	__CC1101_WriteReg(PKTCTRL1, data);
+}
+
+/* Set deviation(1/2 of TX_bw)
+ * d - deviation in KHz
+ */
 void CC1101_setDeviation(float d);
 
 #define CC1101_OK		0
