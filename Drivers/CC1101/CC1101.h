@@ -41,6 +41,12 @@ uint8_t CC1101_GPIO_Prepare();
  */
 uint8_t CC1101_Init();
 
+/* Set GDO0 mode */
+uint8_t CC1101_Set_GDO0(uint8_t GDO0_mode)
+{
+	__CC1101_WriteReg(IOCFG0, GDO0_mode);
+}
+
 /*
  * Transmitting of byte flow with 1 <= length <= 62
  * data - pointer to data array
@@ -167,6 +173,14 @@ void CC1101_SetPQI(uint8_t PQI){
 	__CC1101_WriteReg(PKTCTRL1, data);
 }
 
+/* Set carrier sense threshold */
+void CC1101_SetCS_Thr(uint8_t thr)
+{
+	uint8_t data = __CC1101_ReadReg(PKTCTRL0) & 0b11001111;
+	data |= thr << 4;
+	__CC1101_WriteReg(PKTCTRL0, data);
+}
+
 /* Set deviation(1/2 of TX_bw)
  * d - deviation in KHz
  */
@@ -174,5 +188,69 @@ void CC1101_setDeviation(float d);
 
 #define CC1101_OK		0
 #define CC1101_ERROR	1
+
+/* Set settings`s defines */
+#define CC1101_GDO0_HZ		0x2E
+#define CC1101_GDO0_RDY		0x29
+#define CC1101_GDO0_CS		0x0E
+#define CC1101_GDO0_LOSCOUT	0x27
+#define CC1101_GDO0_CHNCLR	0x09
+
+#define CC1101_MODUL_2FSK 	0
+#define CC1101_MODUL_GFSK 	1
+#define CC1101_MODUL_ASKOOK	3
+#define CC1101_MODUL_4FSK 	4
+#define CC1101_MODUL_MSK 	7
+
+#define CC1101_ATTEN_0DBM	0
+#define CC1101_ATTEN_6DBM	1
+#define CC1101_ATTEN_12DBM	2
+#define CC1101_ATTEN_18DBM	3
+
+#define CC1101_TXPWR_10DBM	0xC0
+#define CC1101_TXPWR_7DBM	0xC8
+#define CC1101_TXPWR_5DBM	0x84
+#define CC1101_TXPWR_0DBM	0x60
+#define CC1101_TXPWR_M10DBM	0x34
+#define CC1101_TXPWR_M15DBM	0x1D
+#define CC1101_TXPWR_M20DBM	0x0E
+#define CC1101_TXPWR_M30DBM	0x12
+
+#define CC1101_ADDRM_NOADDR	0
+#define CC1101_ADDRM_ADDRCH	1
+#define CC1101_ADDRM_ADDRSB	2
+#define CC1101_ADDRM_ADDRDB	3
+
+#define CC1101_AUTOFLUSH_ON		1
+#define CC1101_AUTOFLUSH_OFF 	0
+
+#define CC1101_FIXED_PKTLN 	0b00
+#define CC1101_DYNAM_PKTLN 	0b01
+
+#define CC1101_DRATE_1200	0x0583
+#define CC1101_DRATE_2400	0x0683
+#define CC1101_DRATE_10K	0x0893
+#define CC1101_DRATE_38K4	0x0A83
+#define CC1101_DRATE_76K8	0x0B83
+#define CC1101_DRATE_100K	0x08F8
+#define CC1101_DRATE_250K	0x0D3B
+
+#define CC1101_PREAMB_2B	0
+#define CC1101_PREAMB_3B	1
+#define CC1101_PREAMB_4B	2
+#define CC1101_PREAMB_6B	3
+#define CC1101_PREAMB_8B	4
+#define CC1101_PREAMB_12B	5
+#define CC1101_PREAMB_16B	6
+#define CC1101_PREAMB_24B	7
+
+#define CC1101_EN_CRC		1
+#define CC1101_NO_CRC		0
+
+#define CC1101_EN_WHITENING	1
+#define CC1101_NO_WHITENING	0
+
+#define CC1101_EN_FEC		1
+#define CC1101_NO_FEC		0
 
 #endif /* CC1101_CC1101_H_ */

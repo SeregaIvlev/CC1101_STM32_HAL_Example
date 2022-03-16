@@ -49,6 +49,11 @@ uint8_t CC1101_GPIO_Prepare(){
 	return CC1101_OK;
 }
 
+/* Set GDO0 mode */
+uint8_t CC1101_Set_GDO0(uint8_t GDO0_mode)
+{
+	__CC1101_WriteReg(IOCFG0, GDO0_mode);
+}
 /*
  * Check RF`s ID, write initial config, defined in CC1101_macro.h
  */
@@ -388,6 +393,14 @@ void CC1101_setDeviation(float d){
 		c++;
 	}
 	__CC1101_WriteReg(DEVIATN,c);
+}
+
+/* Set carrier sense threshold */
+void CC1101_SetCS_Thr(uint8_t thr)
+{
+	uint8_t data = __CC1101_ReadReg(PKTCTRL0) & 0b11001111;
+	data |= thr << 4;
+	__CC1101_WriteReg(PKTCTRL0, data);
 }
 
 /* non-user functions */

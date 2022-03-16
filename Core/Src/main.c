@@ -68,7 +68,8 @@ void HAL_GPIO_EXTI_Callback(uint16_t GPIO_Pin)
 	if(GPIO_Pin == GDO2_Pin)
 	{
 		uint8_t RSSI, LQI;
-		 HAL_GPIO_TogglePin(LD2_GPIO_Port, LD2_Pin);
+		CC1101_RXPacketCmpl_Callback();
+		HAL_GPIO_TogglePin(LD2_GPIO_Port, LD2_Pin);
 		uint8_t rxLength = CC1101_ReadPacket(rxData, &RSSI, &LQI);
 		HAL_UART_Transmit_IT(&huart2, rxData, rxLength-1);
 

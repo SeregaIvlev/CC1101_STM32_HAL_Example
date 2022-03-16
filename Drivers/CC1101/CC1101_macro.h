@@ -35,7 +35,7 @@ uint8_t CC1101_DefaultSettings[47] = {
 	    0x47,  // DEVIATN             Modem Deviation Setting
 	    0x07,  // MCSM2               Main Radio Control State Machine Configuration
 	    0x30,  // MCSM1               Main Radio Control State Machine Configuration
-	    0x18,  // MCSM0               Main Radio Control State Machine Configuration
+	    0x38,  // MCSM0               Main Radio Control State Machine Configuration
 	    0x1D,  // FOCCFG              Frequency Offset Compensation Configuration
 	    0x1C,  // BSCFG               Bit Synchronization Configuration
 	    0xC7,  // AGCCTRL2            AGC Control
@@ -63,63 +63,6 @@ uint8_t CC1101_DefaultSettings[47] = {
 };
 
 #define CC1101_DEVICE_ID  0x3F
-
-#define CC1101_MODUL_2FSK 	0
-#define CC1101_MODUL_GFSK 	1
-#define CC1101_MODUL_ASKOOK	3
-#define CC1101_MODUL_4FSK 	4
-#define CC1101_MODUL_MSK 	7
-
-#define CC1101_ATTEN_0DBM	0
-#define CC1101_ATTEN_6DBM	1
-#define CC1101_ATTEN_12DBM	2
-#define CC1101_ATTEN_18DBM	3
-
-#define CC1101_TXPWR_10DBM	0xC0
-#define CC1101_TXPWR_7DBM	0xC8
-#define CC1101_TXPWR_5DBM	0x84
-#define CC1101_TXPWR_0DBM	0x60
-#define CC1101_TXPWR_M10DBM	0x34
-#define CC1101_TXPWR_M15DBM	0x1D
-#define CC1101_TXPWR_M20DBM	0x0E
-#define CC1101_TXPWR_M30DBM	0x12
-
-#define CC1101_ADDRM_NOADDR	0
-#define CC1101_ADDRM_ADDRCH	1
-#define CC1101_ADDRM_ADDRSB	2
-#define CC1101_ADDRM_ADDRDB	3
-
-#define CC1101_AUTOFLUSH_ON		1
-#define CC1101_AUTOFLUSH_OFF 	0
-
-#define CC1101_FIXED_PKTLN 	0b00
-#define CC1101_DYNAM_PKTLN 	0b01
-
-#define CC1101_DRATE_1200	0x0583
-#define CC1101_DRATE_2400	0x0683
-#define CC1101_DRATE_10K	0x0893
-#define CC1101_DRATE_38K4	0x0A83
-#define CC1101_DRATE_76K8	0x0B83
-#define CC1101_DRATE_100K	0x08F8
-#define CC1101_DRATE_250K	0x0D3B
-
-#define CC1101_PREAMB_2B	0
-#define CC1101_PREAMB_3B	1
-#define CC1101_PREAMB_4B	2
-#define CC1101_PREAMB_6B	3
-#define CC1101_PREAMB_8B	4
-#define CC1101_PREAMB_12B	5
-#define CC1101_PREAMB_16B	6
-#define CC1101_PREAMB_24B	7
-
-#define CC1101_EN_CRC		1
-#define CC1101_NO_CRC		0
-
-#define CC1101_EN_WHITENING	1
-#define CC1101_NO_WHITENING	0
-
-#define CC1101_EN_FEC		1
-#define CC1101_NO_FEC		0
 
 #define IOCFG2         0x00		//GDO2 Output Pin Configuration
 #define IOCFG1         0x01		//GDO1 Output Pin Configuration
@@ -200,6 +143,10 @@ uint8_t CC1101_DefaultSettings[47] = {
 #define CC1101_PATABLE      0x3E
 #define CC1101_TXFIFO       0x3F
 #define CC1101_RXFIFO       0x3F
+
+
+/* Bit masks */
+#define CC1101_PKTCTRL1_ADDR 0b00000011
 
 
 
