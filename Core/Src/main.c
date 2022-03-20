@@ -131,7 +131,7 @@ int main(void)
   CC1101_GPIO_Prepare();
   CC1101_Init();
   CC1101_GoToRX();
-  HAL_TIM_Base_Start(&htim1);
+  HAL_TIM_Base_Start_IT(&htim1);
   /* USER CODE END 2 */
 
   /* Infinite loop */
