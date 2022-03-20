@@ -131,17 +131,13 @@ int main(void)
   CC1101_GPIO_Prepare();
   CC1101_Init();
   CC1101_GoToRX();
+  HAL_TIM_Base_Start(&htim1);
   /* USER CODE END 2 */
 
   /* Infinite loop */
   /* USER CODE BEGIN WHILE */
   while (1)
   {
-	  /*CC1101_GoToRX();
-	  uint8_t txLength = HAL_UART_ReceiveString(&huart2, txData, 100, HAL_MAX_DELAY);
-	  CC1101_TransmitPacket(txData, txLength);
-	  HAL_GPIO_TogglePin(LD2_GPIO_Port, LD2_Pin);
-	  HAL_Delay(10);*/
 
     /* USER CODE END WHILE */
 
