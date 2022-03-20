@@ -61,14 +61,11 @@ static void MX_SPI1_Init(void);
 uint8_t rxData[64];
 uint8_t txData[64];
 
-
-
 void HAL_GPIO_EXTI_Callback(uint16_t GPIO_Pin)
 {
 	if(GPIO_Pin == GDO2_Pin)
 	{
 		uint8_t RSSI, LQI;
-		CC1101_RXPacketCmpl_Callback();
 		HAL_GPIO_TogglePin(LD2_GPIO_Port, LD2_Pin);
 		uint8_t rxLength = CC1101_ReadPacket(rxData, &RSSI, &LQI);
 		HAL_UART_Transmit_IT(&huart2, rxData, rxLength-1);
@@ -125,18 +122,18 @@ int main(void)
 
   CC1101_GPIO_Prepare();
   CC1101_Init();
-
+  CC1101_GoToWOR();
   /* USER CODE END 2 */
 
   /* Infinite loop */
   /* USER CODE BEGIN WHILE */
   while (1)
   {
-	  CC1101_GoToRX();
+	  /*CC1101_GoToRX();
 	  uint8_t txLength = HAL_UART_ReceiveString(&huart2, txData, 100, HAL_MAX_DELAY);
 	  CC1101_TransmitPacket(txData, txLength);
 	  HAL_GPIO_TogglePin(LD2_GPIO_Port, LD2_Pin);
-	  HAL_Delay(10);
+	  HAL_Delay(10);*/
 
     /* USER CODE END WHILE */
 

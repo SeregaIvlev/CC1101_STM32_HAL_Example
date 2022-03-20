@@ -53,7 +53,9 @@ uint8_t CC1101_GPIO_Prepare(){
 uint8_t CC1101_Set_GDO0(uint8_t GDO0_mode)
 {
 	__CC1101_WriteReg(IOCFG0, GDO0_mode);
+	return CC1101_OK;
 }
+
 /*
  * Check RF`s ID, write initial config, defined in CC1101_macro.h
  */
@@ -112,6 +114,17 @@ uint8_t CC1101_GoToRX()
 }
 
 /*
+ * Enter wakeup-on-radio mode with automatic packet detection
+ */
+uint8_t CC1101_GoToWOR()
+{
+	__CC1101_WriteCMD(CC1101_SIDLE);
+	__CC1101_WriteCMD(CC1101_SWORRST);
+	__CC1101_WriteCMD(CC1101_SWOR);
+	return CC1101_OK;
+}
+
+/*
  * Check RX FIFO state
  * return value - number of bytes in RX FIFO
  */
@@ -144,12 +157,14 @@ uint8_t CC1101_ReadPacket(uint8_t* data, uint8_t* RSSI, uint8_t* LQI)
 		__CC1101_WriteCMD(CC1101_SRX);
 		*RSSI = status[0];
 		*LQI = status[1];
+		CC1101_RXPacketCmpl_Callback();
 		return size;
 	}
 	else
 	{
 		__CC1101_WriteCMD(CC1101_SFRX);
 		__CC1101_WriteCMD(CC1101_SRX);
+		CC1101_RXPacketCmpl_Callback();
  		return 0;
 	}
 }

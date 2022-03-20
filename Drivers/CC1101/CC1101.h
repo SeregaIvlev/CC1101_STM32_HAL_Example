@@ -42,10 +42,7 @@ uint8_t CC1101_GPIO_Prepare();
 uint8_t CC1101_Init();
 
 /* Set GDO0 mode */
-uint8_t CC1101_Set_GDO0(uint8_t GDO0_mode)
-{
-	__CC1101_WriteReg(IOCFG0, GDO0_mode);
-}
+uint8_t CC1101_Set_GDO0(uint8_t GDO0_mode);
 
 /*
  * Transmitting of byte flow with 1 <= length <= 62
@@ -58,6 +55,11 @@ uint8_t CC1101_TransmitPacket(uint8_t* data, uint8_t size);
  * Go to RX mode though t idle. In this mode tranceiver can receive packets
  */
 uint8_t CC1101_GoToRX();
+
+/*
+ * Enter wakeup-on-radio mode with automatic packet detection
+ */
+uint8_t CC1101_GoToWOR();
 
 /*
  * Check RX FIFO state.
@@ -167,19 +169,10 @@ void CC1101_SetFEC(uint8_t mode);
 /* Set preambule quality indicator treshold
  * mode - refer to macro.h file to choose correct value
  */
-void CC1101_SetPQI(uint8_t PQI){
-	uint8_t data = __CC1101_ReadReg(PKTCTRL1) & 0b00011111;
-	data |= PQI << 5;
-	__CC1101_WriteReg(PKTCTRL1, data);
-}
+void CC1101_SetPQI(uint8_t PQI);
 
 /* Set carrier sense threshold */
-void CC1101_SetCS_Thr(uint8_t thr)
-{
-	uint8_t data = __CC1101_ReadReg(PKTCTRL0) & 0b11001111;
-	data |= thr << 4;
-	__CC1101_WriteReg(PKTCTRL0, data);
-}
+void CC1101_SetCS_Thr(uint8_t thr);
 
 /* Set deviation(1/2 of TX_bw)
  * d - deviation in KHz

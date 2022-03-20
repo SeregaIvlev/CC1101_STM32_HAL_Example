@@ -33,17 +33,17 @@ uint8_t CC1101_DefaultSettings[47] = {
 	    0x22,  // MDMCFG1             Modem Configuration
 	    0xF8,  // MDMCFG0             Modem Configuration
 	    0x47,  // DEVIATN             Modem Deviation Setting
-	    0x07,  // MCSM2               Main Radio Control State Machine Configuration
+	    0x01,  // MCSM2               Main Radio Control State Machine Configuration
 	    0x30,  // MCSM1               Main Radio Control State Machine Configuration
-	    0x38,  // MCSM0               Main Radio Control State Machine Configuration
+	    0x18,  // MCSM0               Main Radio Control State Machine Configuration
 	    0x1D,  // FOCCFG              Frequency Offset Compensation Configuration
 	    0x1C,  // BSCFG               Bit Synchronization Configuration
 	    0xC7,  // AGCCTRL2            AGC Control
 	    0x00,  // AGCCTRL1            AGC Control
 	    0xB2,  // AGCCTRL0            AGC Control
-	    0x87,  // WOREVT1             High Byte Event0 Timeout
-	    0x6B,  // WOREVT0             Low Byte Event0 Timeout
-	    0xFB,  // WORCTRL             Wake On Radio Control
+	    0x28,  // WOREVT1             High Byte Event0 Timeout
+	    0xA0,  // WOREVT0             Low Byte Event0 Timeout
+	    0x78,  // WORCTRL             Wake On Radio Control
 	    0xB6,  // FREND1              Front End RX Configuration
 	    0x10,  // FREND0              Front End TX Configuration
 	    0xEA,  // FSCAL3              Frequency Synthesizer Calibration
