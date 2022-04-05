@@ -10,27 +10,6 @@
 
 #include <stdint.h>
 
-
-/* Default config:
- * Base Freq: 		433.0
- * Channel: 		0
- * Modulation: 		GFSK
- * TxPower: 		0 dBm
- * Data rate: 		20 kBaud
- * CRC: 			enabled
- * Channel Spacing: 199.5 kHz
- * RX filter BW: 	325 kHz
- * Deviation: 		47.6 kHz
- * Whitening:		Disabled
- * Manchester: 		Disabled
- * Mode: 			Variable length
- * SynqWord:		D3 91
- * Address check:	No address check
- * Preabule:		30/32 synq word detected
- * Attenuator: 		0 dBm
- * Address:			0x00
- */
-
 /*
  * Initial SPI settings and CS prepare should be implemented here
  */
