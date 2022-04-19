@@ -16,12 +16,3 @@ void ___CC1101_USER_CS_Low(){
 	HAL_GPIO_WritePin(CC1101_CS_GPIO_Port, CC1101_CS_Pin, RESET);
 }
 
-
-__weak void CC1101_RXPacketCmpl_Callback()
-{
-	//nop();
-}
-__weak void CC1101_TXPacketCmpl_Callback()
-{
-	//nop();
-}

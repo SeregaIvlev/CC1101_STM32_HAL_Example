@@ -56,6 +56,13 @@ uint8_t CC1101_Set_GDO0(uint8_t GDO0_mode)
 	return CC1101_OK;
 }
 
+/* Set GDO2 mode */
+uint8_t CC1101_Set_GDO2(uint8_t GDO2_mode)
+{
+	__CC1101_WriteReg(IOCFG2, GDO2_mode);
+	return CC1101_OK;
+}
+
 /*
  * Check RF`s ID, write initial config, defined in CC1101_macro.h
  */
@@ -99,7 +106,6 @@ uint8_t CC1101_TransmitPacket(uint8_t* data, uint8_t size){
 	__CC1101_WriteCMD(CC1101_STX);
 	while((__CC1101_ReadStatusRegs(CC1101_TXBYTES) & 0x7F) != 0);
 	__CC1101_WriteCMD(CC1101_SFTX);
-	CC1101_TXPacketCmpl_Callback();
 	return CC1101_OK;
 }
 
@@ -157,14 +163,12 @@ uint8_t CC1101_ReadPacket(uint8_t* data, uint8_t* RSSI, uint8_t* LQI)
 		__CC1101_WriteCMD(CC1101_SRX);
 		*RSSI = status[0];
 		*LQI = status[1];
-		CC1101_RXPacketCmpl_Callback();
 		return size;
 	}
 	else
 	{
 		__CC1101_WriteCMD(CC1101_SFRX);
 		__CC1101_WriteCMD(CC1101_SRX);
-		CC1101_RXPacketCmpl_Callback();
  		return 0;
 	}
 }

@@ -44,6 +44,9 @@ uint8_t CC1101_Init();
 /* Set GDO0 mode */
 uint8_t CC1101_Set_GDO0(uint8_t GDO0_mode);
 
+/* Set GDO2 mode */
+uint8_t CC1101_Set_GDO2(uint8_t GDO2_mode);
+
 /*
  * Transmitting of byte flow with 1 <= length <= 62
  * data - pointer to data array
@@ -183,11 +186,11 @@ void CC1101_setDeviation(float d);
 #define CC1101_ERROR	1
 
 /* Set settings`s defines */
-#define CC1101_GDO0_HZ		0x2E
-#define CC1101_GDO0_RDY		0x29
-#define CC1101_GDO0_CS		0x0E
-#define CC1101_GDO0_LOSCOUT	0x27
-#define CC1101_GDO0_CHNCLR	0x09
+#define CC1101_GDO0_HI_Z_STATE	0x2E
+#define CC1101_GDO0_RDY_SIGNAL	0x29
+#define CC1101_GDO0_CARRIER_S	0x0E
+#define CC1101_GDO0_L_OSC_OUT	0x27
+#define CC1101_GDO0_CHN_CLR		0x09
 
 #define CC1101_MODUL_2FSK 	0
 #define CC1101_MODUL_GFSK 	1
