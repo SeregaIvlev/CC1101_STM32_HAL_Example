@@ -64,7 +64,7 @@ uint8_t CC1101_Set_GDO2(uint8_t GDO2_mode)
 }
 
 /*
- * Check RF`s ID, write initial config, defined in CC1101_macro.h
+ * Check RF`s ID, write initial config, defined in CC1101_CC1101.h
  */
 uint8_t CC1101_Init(){
 
@@ -80,11 +80,11 @@ uint8_t CC1101_Init(){
 }
 
 /*
- * Transmitting of byte flow with 1 <= length <= 62
+ * Transmitting of byte flow with 1 <= length <= 62 in pooling mode
  * data - pointer to data array
  * size - quantity of bytes to be sent
  */
-uint8_t CC1101_TransmitPacket(uint8_t* data, uint8_t size){
+uint8_t CC1101_TransmitPacketPooling(uint8_t* data, uint8_t size){
 	__CC1101_WriteCMD(CC1101_SIDLE);
 	if((__CC1101_ReadReg(PKTCTRL1) & 0b11) != 0b00)
 		size++;
@@ -105,6 +105,37 @@ uint8_t CC1101_TransmitPacket(uint8_t* data, uint8_t size){
 
 	__CC1101_WriteCMD(CC1101_STX);
 	while((__CC1101_ReadStatusRegs(CC1101_TXBYTES) & 0x7F) != 0);
+	__CC1101_WriteCMD(CC1101_SFTX);
+	return CC1101_OK;
+}
+
+/*
+ * Transmitting of byte flow with 1 <= length <= 62 in interrupt mode
+ * data - pointer to data array
+ * size - quantity of bytes to be sent
+ */
+uint8_t CC1101_TransmitPacketInt(uint8_t* data, uint8_t size){
+	__CC1101_WriteCMD(CC1101_SIDLE);
+	if((__CC1101_ReadReg(PKTCTRL1) & 0b11) != 0b00)
+		size++;
+	/* Length select */
+	uint8_t pktformat = __CC1101_ReadReg(PKTCTRL0) & 0b11;
+	if(pktformat == CC1101_DYNAM_PKTLN)
+		__CC1101_WriteReg(CC1101_TXFIFO, size);
+	if(pktformat == CC1101_FIXED_PKTLN)
+		__CC1101_WriteReg(PKTLEN, size);
+
+	/* Address select */
+	if((__CC1101_ReadReg(PKTCTRL1) & 0b11) != 0b00)
+		__CC1101_WriteReg(CC1101_TXFIFO, txAddr);
+
+	CC1101_Set_GDO2(CC1101_GDO_SYNCW_SENT);
+	/* Transmitting */
+	__CC1101_BurstWriteReg(CC1101_TXFIFO, size, data);
+
+	__CC1101_WriteCMD(CC1101_STX);
+	while(HAL_GPIO_ReadPin(GDO0_GPIO_Port, GDO0_Pin));
+	CC1101_Set_GDO2(CC1101_GDO_HI_Z_STATE);
 	__CC1101_WriteCMD(CC1101_SFTX);
 	return CC1101_OK;
 }
@@ -137,7 +168,6 @@ uint8_t CC1101_GoToWOR()
 uint8_t CC1101_IsDataAvailable()
 {
 	return __CC1101_ReadStatusRegs(CC1101_RXBYTES) & 0x7F;
-
 }
 
 /*
@@ -246,7 +276,7 @@ void CC1101_SetChannel(uint8_t channel){
 }
 
 /* Set modulation
- * modulation - refer to macro.h file to choose correct value
+ * modulation - refer to CC1101.h file to choose correct value
  */
 void CC1101_SetModulation(uint8_t modulation){
 	uint8_t data = __CC1101_ReadReg(MDMCFG2);
@@ -256,24 +286,24 @@ void CC1101_SetModulation(uint8_t modulation){
 }
 
 /* Set attenuation in RX mode
- * value - refer to macro.h file to choose correct value
+ * attenuation - refer to CC1101.h file to choose correct value
  */
-void CC1101_SetAttenuator(uint8_t value){
+void CC1101_SetAttenuator(uint8_t attenuation){
 	uint8_t data = __CC1101_ReadReg(FIFOTHR);
 	data &= 0b11001111;
-	data |= value<<4;
+	data |= attenuation<<4;
 	__CC1101_WriteReg(FIFOTHR, data);
 }
 
 /* Set transmit power
- * txPower - refer to macro.h file to choose correct value
+ * txPower - refer to CC1101.h file to choose correct value
  */
 void CC1101_SetTXPower(uint8_t txPower){
 	__CC1101_BurstWriteReg(CC1101_PATABLE, 1, &txPower);
 }
 
 /* Set addressation mode
- * addressationMode - refer to macro.h file to choose correct value
+ * addressationMode - refer to CC1101.h file to choose correct value
  * devAddr - device address(8 bit)
  * txAddr - address mark in packet(8 bit)
  */
@@ -291,17 +321,17 @@ void CC1101_SetAddressation(uint8_t addressationMode, uint8_t devAddr, uint8_t N
 }
 
 /* Set packet length mode
- * mode - refer to macro.h file to choose correct value
+ * Lmode - refer to CC1101.h file to choose correct value
  */
-void CC1101_SetPacketLengthMode(uint8_t mode){
-	if(mode == CC1101_FIXED_PKTLN)
+void CC1101_SetPacketLengthMode(uint8_t Lmode){
+	if(Lmode == CC1101_FIXED_PKTLN)
 	{
 		uint8_t data = 0b11111100 & __CC1101_ReadReg(PKTCTRL0);
 		data |= 0b00;
 		__CC1101_WriteReg(PKTCTRL0, data);
 
 	}
-	if(mode == CC1101_DYNAM_PKTLN)
+	if(Lmode == CC1101_DYNAM_PKTLN)
 	{
 		__CC1101_WriteReg(PKTLEN, 0xFF);
 		uint8_t data = 0b11111100 & __CC1101_ReadReg(PKTCTRL0);
@@ -312,29 +342,29 @@ void CC1101_SetPacketLengthMode(uint8_t mode){
 }
 
 /* Set Autoflash mode
- * mode - refer to macro.h file to choose correct value
+ * Fmode - refer to CC1101.h file to choose correct value
  */
-void CC1101_SetAutoFlashRX(uint8_t mode)
+void CC1101_SetAutoFlashRX(uint8_t Fmode)
 {
 	uint8_t data = __CC1101_ReadReg(PKTCTRL1);
 	data &= 0b11110111;
-	data |= mode<<3;
+	data |= Fmode<<3;
 	__CC1101_WriteReg(PKTCTRL1, data);
 }
 
 /* Set additional mark status
- * mode - refer to macro.h file to choose correct value
+ * Addmode - refer to CC1101.h file to choose correct value
  */
-void CC1101_SetAddStatus(uint8_t mode)
+void CC1101_SetAddStatus(uint8_t Addmode)
 {
 	uint8_t data = __CC1101_ReadReg(PKTCTRL1);
 	data &= 0b11111011;
-	data |= mode<<2;
-	__CC1101_WriteReg(PKTCTRL1, mode);
+	data |= Addmode<<2;
+	__CC1101_WriteReg(PKTCTRL1, Addmode);
 }
 
 /* Set data rate
- * datarate - refer to macro.h file to choose correct value
+ * datarate - refer to CC1101.h file to choose correct value
  */
 void CC1101_SetDataRate(uint16_t datarate){
 	__CC1101_WriteReg(MDMCFG3, (uint8_t)datarate);
@@ -345,7 +375,7 @@ void CC1101_SetDataRate(uint16_t datarate){
 }
 
 /* Set preambule minimal size
- * preamb - refer to macro.h file to choose correct value
+ * preamb - refer to CC1101.h file to choose correct value
  */
 void CC1101_SetPreambuleMinSize(uint8_t preamb)
 {
@@ -355,7 +385,7 @@ void CC1101_SetPreambuleMinSize(uint8_t preamb)
 }
 
 /* Set CRC mode
- * CRCmode - refer to macro.h file to choose correct value
+ * CRCmode - refer to CC1101.h file to choose correct value
  */
 void CC1101_SetCRCmode(uint8_t CRCmode)
 {
@@ -365,7 +395,7 @@ void CC1101_SetCRCmode(uint8_t CRCmode)
 }
 
 /* Set data whitening
- * whitening - refer to macro.h file to choose correct value
+ * whitening - refer to CC1101.h file to choose correct value
  */
 void CC1101_SetWhitening(uint8_t whitening)
 {
@@ -375,18 +405,18 @@ void CC1101_SetWhitening(uint8_t whitening)
 }
 
 /* Set forward error correction
- * mode - refer to macro.h file to choose correct value
+ * mode - refer to CC1101.h file to choose correct value
  * only available in fixed-size packet mode
  */
-void CC1101_SetFEC(uint8_t mode)
+void CC1101_SetFEC(uint8_t FECmode)
 {
 	uint8_t data = __CC1101_ReadReg(MDMCFG1) & 0b01111111;
-	data |= mode << 7;
+	data |= FECmode << 7;
 	__CC1101_WriteReg(MDMCFG1, data);
 }
 
 /* Set preambule quality indicator treshold
- * mode - refer to macro.h file to choose correct value
+ * mode - refer to CC1101.h file to choose correct value
  */
 void CC1101_SetPQI(uint8_t PQI){
 	uint8_t data = __CC1101_ReadReg(PKTCTRL1) & 0b00011111;
