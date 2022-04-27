@@ -9,25 +9,7 @@
 #define CC1101_CC1101_MACRO_H_
 
 #include <stdint.h>
-/* Default config:
- * Base Freq: 		433.0
- * Channel: 		0
- * Modulation: 		GFSK
- * TxPower: 		0 dBm
- * Data rate: 		20 kBaud
- * CRC: 			enabled
- * Channel Spacing: 199.5 kHz
- * RX filter BW: 	325 kHz
- * Deviation: 		47.6 kHz
- * Whitening:		Disabled
- * Manchester: 		Disabled
- * Mode: 			Variable length
- * SynqWord:		D3 91
- * Address check:	No address check
- * Preabule:		30/32 synq word detected
- * Attenuator: 		0 dBm
- * Address:			0x00
- */
+
 uint8_t CC1101_DefaultSettings[47] = {
 	    0x0F,  // IOCFG2              GDO2 Output Pin Configuration
 	    0x2E,  // IOCFG1              GDO1 Output Pin Configuration
@@ -53,7 +35,7 @@ uint8_t CC1101_DefaultSettings[47] = {
 	    0x47,  // DEVIATN             Modem Deviation Setting
 	    0x01,  // MCSM2               Main Radio Control State Machine Configuration
 	    0x30,  // MCSM1               Main Radio Control State Machine Configuration
-	    0x38,  // MCSM0               Main Radio Control State Machine Configuration
+	    0x18,  // MCSM0               Main Radio Control State Machine Configuration
 	    0x1D,  // FOCCFG              Frequency Offset Compensation Configuration
 	    0x1C,  // BSCFG               Bit Synchronization Configuration
 	    0xC7,  // AGCCTRL2            AGC Control
